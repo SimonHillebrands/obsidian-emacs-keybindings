@@ -10,11 +10,48 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 	mySetting: 'default'
 }
 
-export default class MyPlugin extends Plugin {
+export default class EmacsKeybindings extends Plugin {
 	settings: MyPluginSettings;
 
+  private isComposing(view: MarkdownView): boolean {
+    // @ts-expect-error TS2339: Property 'cm' does not exist on type 'Editor'
+    const editorView = view.editor.cm as EditorView
+    return editorView.composing
+  }
+
 	async onload() {
+
 		await this.loadSettings();
+
+
+		
+		this.addCommand({
+			id: "cursor-forward-char",
+			name: "Cursor forward char (Move the cursor one character to the right)",
+			hotkeys: [{ modifiers: ["Ctrl"], key: "f" }],
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+			  if (this.isComposing(view))
+				return;
+				const currentPosition = editor.getCursor(); // Get the current cursor position
+				const newPosition = { line: currentPosition.line, ch: currentPosition.ch + 1 }; // Move one character forward
+				editor.setCursor(newPosition); 
+			}
+		  });
+
+		  this.addCommand({
+			id: "cursor-backward-char",
+			name: "Cursor backward char (Move the cursor one character to the left)",
+			hotkeys: [{ modifiers: ["Ctrl"], key: "b" }],
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+			  if (this.isComposing(view))
+				return;
+				const currentPosition = editor.getCursor(); // Get the current cursor position
+				const newPosition = { line: currentPosition.line, ch: currentPosition.ch - 1 }; // Move one character forward
+				editor.setCursor(newPosition); 
+			}
+		  });
+
+
 
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
@@ -108,9 +145,9 @@ class SampleModal extends Modal {
 }
 
 class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+	plugin: EmacsKeybindings;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: EmacsKeybindings) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
