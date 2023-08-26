@@ -24,7 +24,7 @@ export default class EmacsKeybindings extends Plugin {
 		await this.loadSettings();
 
 
-		
+		//Movement commands
 		this.addCommand({
 			id: "cursor-forward-char",
 			name: "Cursor forward char (Move the cursor one character to the right)",
@@ -51,8 +51,44 @@ export default class EmacsKeybindings extends Plugin {
 			}
 		  });
 
+		  this.addCommand({
+			id: "cursor-forward-word",
+			name: "Cursor forward word (Move the cursor one word to the right)",
+			hotkeys: [{ modifiers: ["Alt"], key: "f" }],
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+			  if (this.isComposing(view))
+				return;
+				const currentPosition = editor.getCursor(); // Get the current cursor position
+				const newPosition = { line: currentPosition.line, ch: currentPosition.ch + 1 }; // Move one character forward
+				editor.moveByGroup(0, 1, true); 
+			}
+		  });		  
 
+		  this.addCommand({
+			id: "cursor-up-line",
+			name: "Cursor forward word (Move the cursor one word to the right)",
+			hotkeys: [{ modifiers: ["Ctrl"], key: "p" }],
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+			  if (this.isComposing(view))
+				return;
+				const currentPosition = editor.getCursor(); // Get the current cursor position
+				const newPosition = { line: currentPosition.line, ch: currentPosition.ch + 1 }; // Move one character forward
+				editor.moveVertically(0, true, 1);
+			}
+		  });	
 
+		  this.addCommand({
+			id: "cursor-down-line",
+			name: "Cursor forward word (Move the cursor one word to the right)",
+			hotkeys: [{ modifiers: ["Ctrl"], key: "n" }],
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+			  if (this.isComposing(view))
+				return;
+				const currentPosition = editor.getCursor(); // Get the current cursor position
+				const newPosition = { line: currentPosition.line, ch: currentPosition.ch + 1 }; // Move one character forward
+				editor.moveVertically(0, false, 1);
+			}
+		  });	 
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
 			// Called when the user clicks the icon.
